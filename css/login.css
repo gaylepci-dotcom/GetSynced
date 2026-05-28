@@ -176,6 +176,13 @@ body {
   border-color: rgba(192,132,252,0.3) !important;
   border-radius: 4px !important;
 }
+
+body {
+  overflow-y: auto;
+  min-height: 100vh;
+  height: auto;
+}
+
 .form-check-input:checked {
   background-color: var(--brand-purple) !important;
   border-color: var(--brand-purple) !important;
