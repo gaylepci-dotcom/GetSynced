@@ -118,7 +118,6 @@ window.handleRegister = async function () {
   try {
 
     await registerWithEmail(
-      fullname,
       email,
       password
     );
