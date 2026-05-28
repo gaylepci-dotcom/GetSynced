@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GetSynced — Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">G</div>
+    <div class="brand-text">
+      <h1>GetSynced</h1>
+      <p>The P Company</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <ul style="list-style:none;padding:0">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" onclick="setActiveNav(this); loadSection('dashboard')">
+          <i class="fas fa-th-large"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setActiveNav(this); loadSection('employees')">
+          <i class="fas fa-users"></i> Employees
+          <span class="nav-badge" id="employeeCount">0</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setActiveNav(this); loadSection('attendance')">
+          <i class="fas fa-calendar-check"></i> Attendance
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setActiveNav(this); loadSection('payroll')">
+          <i class="fas fa-money-bill-wave"></i> Payroll
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setActiveNav(this); loadSection('jobs')">
+          <i class="fas fa-briefcase"></i> Job Listings
+          <span class="nav-badge" id="jobCount">0</span>
+        </a>
+        <a href="#" class="nav-link" onclick="setActiveNav(this);loadSection('applications')">
+  <i class="fas fa-file-alt"></i>
+  <span>Applications</span>
+  <span id="applicationCount" class="nav-badge">0</span>
+</a>
+      </li>
+    </ul>
+    <div class="nav-section-label">System</div>
+    <ul style="list-style:none;padding:0">
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="setActiveNav(this); loadSection('settings')">
+          <i class="fas fa-cog"></i> Settings
+        </a>
+        <a class="nav-link" onclick="setActiveNav(this); loadSection('audit')">
+  <i class="fas fa-history"></i> Audit Log
+</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebarInitials">AD</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUserName">Loading…</div>
+        <div class="user-role" id="sidebarUserEmail">—</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="handleLogout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <header class="topbar">
+    <button class="icon-btn d-lg-none" onclick="toggleSidebar()" style="border:none;">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="globalSearch" placeholder="Search…" oninput="handleSearch(this.value)"/>
+    </div>
+      <div class="topbar-avatar" id="topbarInitials">…</div>
+    </div>
+  </header>
+
+  <!-- Dynamic content -->
+  <div class="content" id="mainContent"></div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════ -->
+
+<!-- Add Employee Modal -->
+<div class="modal-backdrop-custom" id="employeeModal">
+  <div class="modal-box">
+    <h3>Add Employee</h3>
+    <input type="text"   id="empFirstName"  class="form-control mb-3" placeholder="First Name">
+    <input type="text"   id="empLastName"   class="form-control mb-3" placeholder="Last Name">
+    <input type="email"  id="empEmail"      class="form-control mb-3" placeholder="Email">
+    <input type="text"   id="empDepartment" class="form-control mb-3" placeholder="Department">
+    <input type="text"   id="empPosition"   class="form-control mb-3" placeholder="Position / Role">
+    <select id="empStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Active">Active</option>
+      <option value="On Leave">On Leave</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('employeeModal')">Cancel</button>
+      <button class="btn-send"   onclick="saveEmployee()">Save Employee</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Employee Modal -->
+<div class="modal-backdrop-custom" id="editEmployeeModal">
+  <div class="modal-box">
+    <h3>Edit Employee</h3>
+    <input type="hidden" id="editEmpId">
+    <input type="text"  id="editEmpFirstName"  class="form-control mb-3" placeholder="First Name">
+    <input type="text"  id="editEmpLastName"   class="form-control mb-3" placeholder="Last Name">
+    <input type="email" id="editEmpEmail"      class="form-control mb-3" placeholder="Email">
+    <input type="text"  id="editEmpDepartment" class="form-control mb-3" placeholder="Department">
+    <input type="text"  id="editEmpPosition"   class="form-control mb-3" placeholder="Position / Role">
+    <select id="editEmpStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Active">Active</option>
+      <option value="On Leave">On Leave</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('editEmployeeModal')">Cancel</button>
+      <button class="btn-send"   onclick="updateEmployee()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log Attendance Modal -->
+<div class="modal-backdrop-custom" id="attendanceModal">
+  <div class="modal-box">
+    <h3>Log Attendance</h3>
+    <select id="attEmpId" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="">Select Employee…</option>
+    </select>
+    <input type="date" id="attDate" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+    <select id="attStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Present">Present</option>
+      <option value="Late">Late</option>
+      <option value="Half Day">Half Day</option>
+      <option value="Absent">Absent</option>
+      <option value="On Leave">On Leave</option>
+    </select>
+    <input type="text" id="attNote" class="form-control mb-3" placeholder="Note (optional)">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('attendanceModal')">Cancel</button>
+      <button class="btn-send"   onclick="saveAttendance()">Log Attendance</button>
+    </div>
+  </div>
+</div>
+
+<!-- Run Payroll Modal -->
+<div class="modal-backdrop-custom" id="payrollModal">
+  <div class="modal-box">
+    <h3>Run Payroll</h3>
+    <select id="payEmpId" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="">Select Employee…</option>
+    </select>
+    <input type="text" id="payAmount" class="form-control mb-3" placeholder="Amount (PHP)" oninput="formatCurrencyInput(this)">
+    <input type="text"   id="payPeriod"  class="form-control mb-3" placeholder="Pay Period (e.g. May 2026)">
+    <select id="payStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Paid">Paid</option>
+      <option value="Pending">Pending</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('payrollModal')">Cancel</button>
+      <button class="btn-send"   onclick="savePayroll()">Save Payroll</button>
+    </div>
+  </div>
+</div>
+
+<!-- Post Job Modal -->
+<div class="modal-backdrop-custom" id="jobModal">
+  <div class="modal-box">
+    <h3>Post Job</h3>
+    <input type="text" id="jobTitle"      class="form-control mb-3" placeholder="Job Title">
+    <input type="text" id="jobDepartment" class="form-control mb-3" placeholder="Department">
+    <input type="text" id="jobLocation"   class="form-control mb-3" placeholder="Location">
+    <select id="jobType" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Full-time">Full-time</option>
+      <option value="Part-time">Part-time</option>
+      <option value="Contract">Contract</option>
+      <option value="Internship">Internship</option>
+    </select>
+    <select id="jobStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Open">Open</option>
+      <option value="Closed">Closed</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('jobModal')">Cancel</button>
+      <button class="btn-send"   onclick="saveJob()">Post Job</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-backdrop-custom" id="deleteModal">
+  <div class="modal-box">
+    <h3>Confirm Delete</h3>
+    <p id="deleteMessage" style="color:var(--text-muted);font-size:14px;margin-bottom:8px;"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-send" style="background:linear-gradient(135deg,#ef4444,#b91c1c);" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="
+  position:fixed;bottom:28px;right:28px;z-index:99999;
+  background:var(--navy-card);border:1px solid var(--border);
+  border-radius:12px;padding:14px 20px;font-size:13px;
+  color:var(--text-primary);box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  display:none;align-items:center;gap:10px;min-width:220px;
+  animation:fadeUp 0.3s ease;
+"></div>
+
+<!-- Edit Attendance Modal -->
+<div class="modal-backdrop-custom" id="editAttendanceModal">
+  <div class="modal-box">
+    <h3>Edit Attendance</h3>
+
+    <input type="hidden" id="editAttId">
+
+    <select id="editAttEmpId" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="">Select Employee…</option>
+    </select>
+
+    <input type="date" id="editAttDate" class="form-control mb-3">
+
+    <select id="editAttStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Present">Present</option>
+      <option value="Late">Late</option>
+      <option value="Half Day">Half Day</option>
+      <option value="Absent">Absent</option>
+      <option value="On Leave">On Leave</option>
+    </select>
+
+    <input type="text" id="editAttNote" class="form-control mb-3" placeholder="Note">
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('editAttendanceModal')">Cancel</button>
+      <button class="btn-send" onclick="updateAttendance()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Payroll Modal -->
+<div class="modal-backdrop-custom" id="editPayrollModal">
+  <div class="modal-box">
+    <h3>Edit Payroll</h3>
+
+    <input type="hidden" id="editPayId">
+
+    <select id="editPayEmpId" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="">Select Employee…</option>
+    </select>
+
+    <input type="text" id="editPayAmount" class="form-control mb-3" placeholder="Amount (PHP)" oninput="formatCurrencyInput(this)">
+
+    <input type="text" id="editPayPeriod" class="form-control mb-3" placeholder="Pay Period (e.g. May 2026)">
+
+    <select id="editPayStatus" class="form-control mb-3" style="background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px 16px;">
+      <option value="Paid">Paid</option>
+      <option value="Pending">Pending</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('editPayrollModal')">Cancel</button>
+      <button class="btn-send" onclick="updatePayroll()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="./javascript/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Careers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121933; --navy:#0f1730; --border:rgba(255,255,255,.08);
+      --text-primary:#eef2ff; --text-secondary:#c7d2fe; --text-muted:#94a3b8;
+      --brand-purple:#8b5cf6; --ring-violet:#c084fc; --brand-amber:#f59e0b;
+      --brand-orange:#f97316; --accent-light:#a78bfa; --accent-dim:rgba(139,92,246,.16);
+      --danger:#ef4444; --danger-bg:rgba(239,68,68,.12); --success:#22c55e; --success-bg:rgba(34,197,94,.12);
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui;background:linear-gradient(180deg,#090d1a,#0b1020);color:var(--text-primary)}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 48px}
+    .hero{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:24px}
+    .hero h1{font-family:Sora,sans-serif;margin:0 0 8px;font-size:34px}
+    .hero p{margin:0;color:var(--text-muted)}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .panel{background:rgba(18,25,51,.88);border:1px solid var(--border);border-radius:18px;backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .panel-header{padding:18px 18px 0}
+    .panel-title{font-weight:700;font-size:15px}
+    .panel-body{padding:18px}
+    .job-list{display:grid;gap:14px}
+    .job-card{border:1px solid var(--border);background:rgba(15,23,48,.72);border-radius:16px;padding:16px}
+    .job-top{display:flex;justify-content:space-between;align-items:start;gap:12px}
+    .job-title{font-family:Sora,sans-serif;font-size:18px;margin:0 0 8px}
+    .job-meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--text-muted);font-size:13px}
+    .badge{display:inline-flex;align-items:center;padding:8px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .badge-open{background:var(--success-bg);color:#86efac}
+    .form-control{width:100%;background:var(--navy);color:var(--text-primary);border:1px solid rgba(192,132,252,.2);border-radius:12px;padding:12px 14px;outline:none}
+    .form-control::placeholder{color:var(--text-muted)}
+    textarea.form-control{min-height:110px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg,var(--brand-purple),var(--ring-violet));color:#fff}
+    .btn-ghost{background:var(--accent-dim);color:var(--accent-light)}
+    .hint{font-size:12px;color:var(--text-muted);margin-top:8px}
+    .toast{position:fixed;right:18px;bottom:18px;display:none;gap:10px;align-items:center;background:#10172d;border:1px solid var(--border);padding:12px 14px;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+    .empty{color:var(--text-muted);padding:14px 0}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.hero{align-items:start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Careers at GetSynced</h1>
+        <p>Browse open roles and submit your application with a Google Drive resume link.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Open Positions</div>
+        </div>
+        <div class="panel-body">
+          <div id="jobList" class="job-list">
+            <div class="empty">Loading jobs…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Apply Now</div>
+        </div>
+        <div class="panel-body">
+          <select id="appJobId" class="form-control" style="margin-bottom:12px;">
+            <option value="">Select Job…</option>
+          </select>
+
+          <div class="row" style="margin-bottom:12px;">
+            <input id="appFullName" class="form-control" placeholder="Full Name" />
+            <input id="appEmail" class="form-control" placeholder="Email Address" />
+          </div>
+
+          <div class="row" style="margin-bottom:12px;">
+            <input id="appPhone" class="form-control" placeholder="Phone Number" />
+            <input id="appLocation" class="form-control" placeholder="Location / City" />
+          </div>
+
+          <textarea id="appCoverLetter" class="form-control" placeholder="Short Cover Letter" style="margin-bottom:12px;"></textarea>
+
+          <input id="appResumeLink" class="form-control" placeholder="Google Drive Resume Link" />
+          <div class="hint">Please upload your resume to Google Drive and set sharing to “Anyone with the link can view”.</div>
+
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn btn-ghost" onclick="clearApplicationForm()">Clear</button>
+            <button class="btn btn-primary" onclick="submitApplication()">Submit Application</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBSDXY2thKUA_hFX3_AAt8NkymbmqnYEFk",
+      authDomain: "thepcompany-fdc3a.firebaseapp.com",
+      projectId: "thepcompany-fdc3a",
+      storageBucket: "thepcompany-fdc3a.firebasestorage.app",
+      messagingSenderId: "474105576770",
+      appId: "1:474105576770:web:d936d2cd0db46eab381cdb",
+      measurementId: "G-XK79GD5DDL",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    let openJobs = [];
+
+    function toast(msg, icon="ℹ️") {
+      const t = document.getElementById("toast");
+      t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      t.style.display = "flex";
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.style.display = "none", 3200);
+    }
+
+    function val(id) {
+      return (document.getElementById(id)?.value || "").trim();
+    }
+
+    function setJobSelect() {
+      const sel = document.getElementById("appJobId");
+      sel.innerHTML = `<option value="">Select Job…</option>` + openJobs.map(j =>
+        `<option value="${j.id}">${j.title}${j.department ? " — " + j.department : ""}</option>`
+      ).join("");
+    }
+
+    function renderJobs() {
+      const box = document.getElementById("jobList");
+      if (!openJobs.length) {
+        box.innerHTML = `<div class="empty">No open positions right now.</div>`;
+        return;
+      }
+
+      box.innerHTML = openJobs.map(j => `
+        <div class="job-card">
+          <div class="job-top">
+            <div>
+              <div class="job-title">${j.title || "Untitled"}</div>
+              <div class="job-meta">
+                ${j.department ? `<span>${j.department}</span>` : ""}
+                ${j.location ? `<span>${j.location}</span>` : ""}
+                ${j.type ? `<span>${j.type}</span>` : ""}
+              </div>
+            </div>
+            <span class="badge badge-open">${j.status || "Open"}</span>
+          </div>
+          <div style="margin-top:14px;">
+            <button class="btn btn-primary" onclick="selectJob('${j.id}')">Apply for this role</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.selectJob = function(id) {
+      document.getElementById("appJobId").value = id;
+      document.getElementById("appJobId").scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    window.clearApplicationForm = function() {
+      ["appJobId","appFullName","appEmail","appPhone","appLocation","appCoverLetter","appResumeLink"]
+        .forEach(id => document.getElementById(id).value = "");
+    };
+
+    window.submitApplication = async function() {
+      const jobId       = val("appJobId");
+      const fullName    = val("appFullName");
+      const email       = val("appEmail");
+      const phone       = val("appPhone");
+      const location    = val("appLocation");
+      const coverLetter = val("appCoverLetter");
+      const resumeLink  = val("appResumeLink");
+
+      if (!jobId || !fullName || !email || !phone || !resumeLink) {
+        toast("Please fill in all required fields.", "⚠️");
+        return;
+      }
+
+      if (!resumeLink.includes("drive.google.com")) {
+        toast("Please enter a valid Google Drive link.", "⚠️");
+        return;
+      }
+
+      const job = openJobs.find(j => j.id === jobId);
+      if (!job) {
+        toast("Selected job was not found.", "❌");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "applications"), {
+          jobId,
+          jobTitle: job.title || "",
+          department: job.department || "",
+          fullName,
+          email,
+          phone,
+          location,
+          coverLetter,
+          resumeLink,
+          status: "New",
+          createdAt: serverTimestamp(),
+        });
+
+        clearApplicationForm();
+        toast("Application submitted successfully.", "✅");
+      } catch (e) {
+        toast("Failed to submit application.", "❌");
+        console.error(e);
+      }
+    };
+
+    async function loadJobs() {
+      try {
+        const snap = await getDocs(query(
+          collection(db, "jobs"),
+          where("status", "==", "Open"),
+          orderBy("createdAt", "desc")
+        ));
+        openJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderJobs();
+        setJobSelect();
+      } catch (e) {
+        document.getElementById("jobList").innerHTML = `<div class="empty">Failed to load jobs.</div>`;
+        console.error(e);
+      }
+    }
+
+    loadJobs();
+  </script>
+</body>
+</html>

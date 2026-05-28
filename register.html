@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | GetSynced</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <div class="brand-mark">
+      <div class="brand-icon">P</div>
+
+      <div class="brand-text">
+        <h1>GetSynced</h1>
+        <p>The P Company</p>
+      
+      </div>
+    </div>
+
+    <div class="login-heading">
+      <h2>Create Account</h2>
+  
+    </div>
+
+    <!-- Error Alert -->
+    <div class="alert-custom" id="registerAlert">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="registerAlertMsg">Something went wrong.</span>
+    </div>
+
+    <!-- Success Alert -->
+    <div class="alert-success" id="registerSuccess">
+      <i class="fas fa-check-circle"></i>
+      <span id="registerSuccessMsg">Account created successfully!</span>
+    </div>
+
+    <!-- Full Name -->
+    <div class="mb-3">
+      <label class="form-label">Full Name</label>
+
+      <div class="input-group-custom">
+        <i class="fas fa-user input-icon"></i>
+
+        <input
+          type="text"
+          class="form-control"
+          id="fullname"
+          placeholder="Juan Dela Cruz"
+        />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email Address</label>
+
+      <div class="input-group-custom">
+        <i class="fas fa-envelope input-icon"></i>
+
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="you@company.com"
+          autocomplete="email"
+        />
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+
+      <div class="input-group-custom">
+        <i class="fas fa-lock input-icon"></i>
+
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Create a password"
+        />
+
+        <button class="toggle-pass" onclick="togglePass()" type="button">
+          <i class="fas fa-eye" id="eyeIcon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="mb-3">
+      <label class="form-label">Confirm Password</label>
+
+      <div class="input-group-custom">
+        <i class="fas fa-lock input-icon"></i>
+
+        <input
+          type="password"
+          class="form-control"
+          id="confirmPassword"
+          placeholder="Confirm your password"
+        />
+
+        <button class="toggle-pass" onclick="toggleConfirmPass()" type="button">
+          <i class="fas fa-eye" id="confirmEyeIcon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="form-options">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="terms"/>
+
+        <label class="form-check-label" for="terms">
+          I agree to the Terms & Conditions
+        </label>
+      </div>
+    </div>
+
+    <!-- Register Button -->
+    <button class="btn-login" id="registerBtn" onclick="handleRegister()">
+      Create Account &nbsp;
+      <i class="fas fa-user-plus fa-sm"></i>
+    </button>
+
+    <!-- Login Redirect -->
+    <div class="text-center mt-4">
+      <p style="color:#94a3b8; font-size:14px;">
+        Already have an account?
+        <a href="login.html" class="forgot-link">Sign In</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script type="module" src="/javascript/firebase.js"></script>
+<script type="module" src="/javascript/register.js"></script>
+
+<script>
+  function togglePass() {
+    const password = document.getElementById("password");
+    const icon = document.getElementById("eyeIcon");
+
+    if (password.type === "password") {
+      password.type = "text";
+      icon.className = "fas fa-eye-slash";
+    } else {
+      password.type = "password";
+      icon.className = "fas fa-eye";
+    }
+  }
+
+  function toggleConfirmPass() {
+    const password = document.getElementById("confirmPassword");
+    const icon = document.getElementById("confirmEyeIcon");
+
+    if (password.type === "password") {
+      password.type = "text";
+      icon.className = "fas fa-eye-slash";
+    } else {
+      password.type = "password";
+      icon.className = "fas fa-eye";
+    }
+  }
+</script>
+<script type="module" src="/javascript/firebase.js"></script>
+<script type="module" src="/javascript/register.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
