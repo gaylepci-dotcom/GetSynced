@@ -4,7 +4,7 @@ import {
   registerWithEmail,
   onAuthChange,
   friendlyError,
-} from "./firebase.js";
+} from "firebase.js";
 
 
 // ── Redirect if already logged in ───────────────────────
