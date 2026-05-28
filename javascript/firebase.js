@@ -69,7 +69,6 @@ export async function registerWithEmail(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
-export { auth, db, analytics }; // already there, don't duplicate
 
 /** Sign in with Google popup. */
 export async function loginWithGoogle() {
@@ -90,5 +89,6 @@ export async function logout() {
 export function onAuthChange(callback) {
   return onAuthStateChanged(auth, callback);
 }
+export { auth, db, analytics }; // already there, don't duplicate
 
-export { auth, db, analytics };
+
