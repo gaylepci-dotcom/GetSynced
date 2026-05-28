@@ -61,6 +61,16 @@ export async function loginWithEmail(email, password, remember = false) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
+/** Register a new user with email + password. */
+export async function registerWithEmail(email, password) {
+  const { createUserWithEmailAndPassword } = await import(
+    "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js"
+  );
+  return createUserWithEmailAndPassword(auth, email, password);
+}
+
+export { auth, db, analytics }; // already there, don't duplicate
+
 /** Sign in with Google popup. */
 export async function loginWithGoogle() {
   return signInWithPopup(auth, provider);
